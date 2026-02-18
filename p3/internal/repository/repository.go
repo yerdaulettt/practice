@@ -8,7 +8,10 @@ import (
 
 type UserRepository interface {
 	GetUsers() ([]modules.User, error)
-	GetUserByid(id int) (modules.User, error)
+	NewUser(newUser modules.User) (int, error)
+	DeleteUser(id int) (*modules.User, error)
+	GetUserByid(id int) (*modules.User, error)
+	UpdateUser(id int, userToUpdate modules.User) (*modules.User, error)
 }
 
 type Repositories struct {

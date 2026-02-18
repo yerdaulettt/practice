@@ -4,10 +4,11 @@ import (
 	"context"
 	"log"
 	"os"
+	"time"
+
 	"p3/internal/repository"
 	"p3/internal/repository/_postgres"
 	"p3/pkg/modules"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -17,17 +18,21 @@ func initConfig() *modules.PostgresqlConfig {
 	if err != nil {
 		log.Fatal("error loading .env file")
 	}
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USERNAME")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
-	dbUser := os.Getenv("DB_USERNAME")
+	sslmode := os.Getenv("DB_SSLMODE")
 
 	return &modules.PostgresqlConfig{
-		Host:        "localhost",
-		Port:        "5432",
+		Host:        host,
+		Port:        port,
 		Username:    dbUser,
 		Password:    password,
 		DBName:      dbname,
-		SSLMode:     "disable",
+		SSLMode:     sslmode,
 		ExecTimeout: 5 * time.Second,
 	}
 }

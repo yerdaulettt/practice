@@ -3,12 +3,14 @@ package _postgres
 import (
 	"context"
 	"fmt"
+
 	"p3/pkg/modules"
 
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/jmoiron/sqlx"
+
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
