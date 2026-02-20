@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -10,18 +11,18 @@ import (
 	"p3/pkg/modules"
 )
 
-var useCaseForUser = usecase.NewUserUseCase(dbStart())
+var useCaseForUser = usecase.NewUserUseCase(dbStart(), initRedis())
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	users := useCaseForUser.GetUsers()
-	if users == nil {
-		w.Write([]byte(`{"error":"something went wrong!"}`))
+	users, err := useCaseForUser.GetUsers()
+	if err != nil {
+		w.Write([]byte(`{"error":"` + err.Error() + `!"}`))
 		return
 	}
 
-	err := json.NewEncoder(w).Encode(&users)
+	err = json.NewEncoder(w).Encode(&users)
 	if err != nil {
 		w.Write([]byte(`{"error": "json error!"}`))
 	}
@@ -33,16 +34,18 @@ func NewUser(w http.ResponseWriter, r *http.Request) {
 	var user modules.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		w.Write([]byte(`{"error":"json error!"}`))
+		w.Write([]byte(`{"error":"json error! or invalid request body"}`))
 		return
 	}
 
-	id := useCaseForUser.NewUser(user)
-	if id == -1 {
-		w.Write([]byte(`{"error":"not found or error!"}`))
+	id, err := useCaseForUser.NewUser(user)
+	if err != nil {
+		log.Println("error from handlers.go:", err)
+		w.Write([]byte(`{"error":"` + err.Error() + `"}`))
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	response := fmt.Sprintf(`{"new user with id":"%d"}`, id)
 	w.Write([]byte(response))
 }
@@ -56,8 +59,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deletedUser := useCaseForUser.DeleteUser(id)
-	if deletedUser == nil {
+	deletedUser, err := useCaseForUser.DeleteUser(id)
+	if err != nil {
+		log.Println("error from handlers.go:", err)
 		w.Write([]byte(`{"error":"no user with such id"}`))
 		return
 	}
@@ -78,9 +82,11 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := useCaseForUser.GetUserByid(id)
-	if user == nil {
-		w.Write([]byte(`{"error":"user not found or error"}`))
+	user, err := useCaseForUser.GetUserByid(id)
+	if err != nil {
+		log.Println("error from handlers.go:", err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"error":"user not found"}`))
 		return
 	}
 
@@ -106,9 +112,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedUser := useCaseForUser.UpdateUser(id, userToUpdate)
-	if updatedUser == nil {
-		w.Write([]byte(`{"error":"not found!"}`))
+	updatedUser, err := useCaseForUser.UpdateUser(id, userToUpdate)
+	if err != nil {
+		log.Println("error from handlers.go:", err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(`{"error":"user not found!"}`))
 		return
 	}
 

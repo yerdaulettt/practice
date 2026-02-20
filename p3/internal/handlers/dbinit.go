@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"p3/pkg/modules"
 
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 )
 
 func initConfig() *modules.PostgresqlConfig {
@@ -46,4 +48,16 @@ func dbStart() *repository.Repositories {
 	db := _postgres.NewPGXDialect(ctx, dbConfig)
 
 	return repository.NewRepositories(db)
+}
+
+func initRedis() *redis.Client {
+	redisCache := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+		Protocol: 2,
+	})
+
+	fmt.Println("redis opened...")
+	return redisCache
 }

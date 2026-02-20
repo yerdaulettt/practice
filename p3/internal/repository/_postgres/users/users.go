@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"time"
 
 	"p3/internal/repository/_postgres"
@@ -39,7 +38,6 @@ func (r *Repository) NewUser(newUser modules.User) (int, error) {
 		newUser.Name, newUser.Age, newUser.Hobby, newUser.Profession).Scan(&id)
 
 	if err != nil {
-		fmt.Println("ERROR", err)
 		return -1, err
 	}
 
