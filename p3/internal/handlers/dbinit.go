@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -58,6 +57,6 @@ func initRedis() *redis.Client {
 		Protocol: 2,
 	})
 
-	fmt.Println("redis opened...")
+	log.Println("redis opened...")
 	return redisCache
 }

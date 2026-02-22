@@ -1,6 +1,9 @@
 package users
 
 import (
+	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"p3/internal/repository/_postgres"
@@ -71,11 +74,34 @@ func (r *Repository) GetUserByid(id int) (*modules.User, error) {
 }
 
 func (r *Repository) UpdateUser(id int, userToUpdate modules.User) (*modules.User, error) {
-	var updatedUser modules.User
+	var idForCheck int
+	err := r.db.DB.QueryRow("select id from users where id = $1", id).Scan(&idForCheck)
+	if err != nil {
+		return nil, err
+	}
 
-	err := r.db.DB.QueryRow(
-		"update users set (name, age, hobby, profession) = ($1, $2, $3, $4) where id = $5 returning *",
-		userToUpdate.Name, userToUpdate.Age, userToUpdate.Hobby, userToUpdate.Profession, id).Scan(
+	query := ""
+
+	if userToUpdate.Name != "" {
+		query += fmt.Sprintf("name = '%s', ", userToUpdate.Name)
+	}
+	if userToUpdate.Age != 0 {
+		query += fmt.Sprintf("age = %d, ", userToUpdate.Age)
+	}
+	if userToUpdate.Hobby != "" {
+		query += fmt.Sprintf("hobby = '%s', ", userToUpdate.Hobby)
+	}
+	if userToUpdate.Profession != "" {
+		query += fmt.Sprintf("profession = '%s'", userToUpdate.Profession)
+	}
+
+	if query == "" {
+		return nil, errors.New("No data provided to update user")
+	}
+
+	var updatedUser modules.User
+	query = "update users set " + strings.Trim(query, ", ") + " where id = $1 returning *"
+	err = r.db.DB.QueryRow(query, id).Scan(
 		&updatedUser.Id, &updatedUser.Name, &updatedUser.Age, &updatedUser.Hobby, &updatedUser.Profession)
 
 	if err != nil {

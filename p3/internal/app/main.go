@@ -19,6 +19,9 @@ func Run() {
 	r.HandleFunc("DELETE /users/{id}", handlers.DeleteUser)
 	r.HandleFunc("PATCH /users/{id}", handlers.UpdateUser)
 
+	r2 := middleware.LogMiddleware(r)
+	r2 = middleware.AuthMiddleware(r2)
+
 	log.Println("Starting...")
-	log.Fatal(http.ListenAndServe(":8080", middleware.LogMiddleware(r)))
+	log.Fatal(http.ListenAndServe(":8080", r2))
 }
