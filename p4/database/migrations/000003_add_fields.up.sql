@@ -1,0 +1,1 @@
+alter table users add column age int, add column hobby varchar(100), add column profession varchar(100);

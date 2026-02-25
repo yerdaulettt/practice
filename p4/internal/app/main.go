@@ -1,0 +1,27 @@
+package app
+
+import (
+	"log"
+	"net/http"
+
+	"p4/internal/handlers"
+	"p4/internal/middleware"
+)
+
+func Run() {
+	r := http.NewServeMux()
+
+	r.HandleFunc("GET /healthcheck", handlers.Healthcheck)
+
+	r.HandleFunc("GET /users", handlers.GetAllUsers)
+	r.HandleFunc("GET /users/{id}", handlers.GetUserByID)
+	r.HandleFunc("POST /users", handlers.NewUser)
+	r.HandleFunc("DELETE /users/{id}", handlers.DeleteUser)
+	r.HandleFunc("PATCH /users/{id}", handlers.UpdateUser)
+
+	r2 := middleware.LogMiddleware(r)
+	r2 = middleware.AuthMiddleware(r2)
+
+	log.Println("Starting...")
+	log.Fatal(http.ListenAndServe(":8080", r2))
+}
