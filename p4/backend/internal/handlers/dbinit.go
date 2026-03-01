@@ -44,7 +44,7 @@ func dbStart() *repository.Repositories {
 }
 
 func initRedis() *redis.Client {
-	address := os.Getenv("CACHE_HOST") + os.Getenv("CACHE_PORT")
+	address := os.Getenv("CACHE_HOST") + ":" + os.Getenv("CACHE_PORT")
 	redisCache := redis.NewClient(&redis.Options{
 		Addr:     address,
 		Password: "",

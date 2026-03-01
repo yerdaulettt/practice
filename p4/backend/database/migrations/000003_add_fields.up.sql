@@ -1,0 +1,1 @@
+insert into users (name, age, hobby, profession) values ('Name 1', 77, 'Hobby 1', 'Profession 1');

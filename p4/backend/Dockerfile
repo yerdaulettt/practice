@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN go build -o myapp ./cmd/api/main.go
 
-FROM alpine
+FROM alpine:3.23.3
 COPY --from=builder app/database/migrations/ database/migrations
 COPY --from=builder app/myapp /myapp
 ENTRYPOINT ["/myapp"]
