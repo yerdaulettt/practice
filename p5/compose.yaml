@@ -1,0 +1,31 @@
+services:
+  backend:
+    container_name: backend
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    container_name: db
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user5 -d p5db"]
+      interval: 10s
+      retries: 5
+      timeout: 10s
+      start_period: 30s
