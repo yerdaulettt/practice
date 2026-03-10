@@ -1,0 +1,33 @@
+insert into users (name, email, gender, birth_date) values
+('Name 1', '1@email.com', 'female', '2000-09-27'),
+('Name 2', '2@email.com', 'male', '2022-09-27'),
+('Name 3', '3@email.com', 'female', '2012-09-27'),
+('Name 4', '4@email.com', 'male', '2013-09-27'),
+('Name 5', '5@email.com', 'female', '2015-09-27'),
+('Name 6', '6@email.com', 'female', '1993-09-27'),
+('Name 7', '7@email.com', 'male', '2003-09-27'),
+('Name 8', '8@email.com', 'female', '2002-09-27'),
+('Name 9', '9@email.com', 'male', '2001-09-27'),
+('Name 10', '10@email.com', 'male', '2000-09-27'),
+('Name 11', '11@email.com', 'female', '1996-09-27'),
+('Name 12', '12@email.com', 'male', '2023-09-27'),
+('Name 13', '13@email.com', 'female', '2024-09-27'),
+('Name 14', '14@email.com', 'male', '2025-09-27'),
+('Name 15', '15@email.com', 'female', '2011-09-27'),
+('Name 16', '16@email.com', 'female', '2001-09-27'),
+('Name 17', '17@email.com', 'male', '1977-09-27'),
+('Name 18', '18@email.com', 'female', '1992-09-27'),
+('Name 19', '19@email.com', 'male', '2014-09-27'),
+('Name 20', '20@email.com', 'female', '2018-09-27');
+
+insert into user_friends (user_id, friend_id) values
+(10, 11),
+(10, 12),
+(10, 13),
+(10, 14),
+(10, 15),
+(19, 20),
+(19, 18),
+(19, 11),
+(19, 12),
+(19, 13);

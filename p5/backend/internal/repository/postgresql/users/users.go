@@ -18,7 +18,7 @@ func (r *Repository) GetUserByID(id int) (*models.User, error) {
 	var user models.User
 
 	query := "SELECT * FROM users WHERE id = $1"
-	err := r.db.DB.QueryRow(query, id).Scan(&user.Id, &user.Name, &user.Email)
+	err := r.db.DB.QueryRow(query, id).Scan(&user.Id, &user.Name, &user.Email, &user.Gender, &user.BirthDate)
 	if err != nil {
 		log.Println("error", err)
 		return nil, err
@@ -38,7 +38,7 @@ func (r *Repository) GetPaginatedUsers(page int, pageSize int) (models.Paginated
 		return models.PaginatedResponse{}, err
 	}
 
-	query := `SELECT id, name, email FROM users ORDER BY id LIMIT $1 OFFSET $2`
+	query := `SELECT id, name, email, gender, birth_date FROM users ORDER BY id LIMIT $1 OFFSET $2`
 	rows, err := r.db.DB.Query(query, pageSize, offset)
 	if err != nil {
 		return models.PaginatedResponse{}, err
@@ -47,7 +47,7 @@ func (r *Repository) GetPaginatedUsers(page int, pageSize int) (models.Paginated
 	defer rows.Close()
 	for rows.Next() {
 		var u models.User
-		if err := rows.Scan(&u.Id, &u.Name, &u.Email); err != nil {
+		if err := rows.Scan(&u.Id, &u.Name, &u.Email, &u.Gender, &u.BirthDate); err != nil {
 			return models.PaginatedResponse{}, err
 		}
 
