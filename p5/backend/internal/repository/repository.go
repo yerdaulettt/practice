@@ -7,8 +7,8 @@ import (
 )
 
 type UserRepository interface {
-	GetUserByID(id int) (*models.User, error)
-	GetPaginatedUsers(page int, pageSize int) (models.PaginatedResponse, error)
+	GetPaginatedUsers(filters *models.UserFilter, page int, pageSize int) (models.PaginatedResponse, error)
+	GetCommonFriends(id1 int, id2 int) ([]models.User, error)
 }
 
 type Repositories struct {

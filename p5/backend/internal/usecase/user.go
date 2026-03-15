@@ -9,16 +9,16 @@ type UserUsecase struct {
 	repo repository.UserRepository
 }
 
-func NewUserUsecase(r *repository.Repositories) *UserUsecase {
+func NewUserUsecase(r *repository.Repositories) repository.UserRepository {
 	return &UserUsecase{repo: r}
 }
 
-func (u *UserUsecase) GetUserByID(id int) (*models.User, error) {
-	user, err := u.repo.GetUserByID(id)
-	return user, err
+func (u *UserUsecase) GetPaginatedUsers(filters *models.UserFilter, page int, pageSize int) (models.PaginatedResponse, error) {
+	response, err := u.repo.GetPaginatedUsers(filters, page, pageSize)
+	return response, err
 }
 
-func (u *UserUsecase) GetPaginatedUsers(page int, pageSize int) (models.PaginatedResponse, error) {
-	response, err := u.repo.GetPaginatedUsers(page, pageSize)
+func (u *UserUsecase) GetCommonFriends(id1 int, id2 int) ([]models.User, error) {
+	response, err := u.repo.GetCommonFriends(id1, id2)
 	return response, err
 }

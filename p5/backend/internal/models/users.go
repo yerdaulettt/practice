@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	Id        int       `json:"id" db:"id"`
@@ -15,4 +17,14 @@ type PaginatedResponse struct {
 	TotalCount int    `json:"totalCount"`
 	Page       int    `json:"page"`
 	PageSize   int    `json:"pageSize"`
+}
+
+type UserFilter struct {
+	OrderBy           string
+	Sort              string
+	Name              string
+	Email             string
+	Gender            string
+	BirthDateMoreThan time.Time
+	BrithDateLessThan time.Time
 }

@@ -11,8 +11,8 @@ import (
 func Run() {
 	r := http.NewServeMux()
 
-	r.HandleFunc("GET /users/{id}", handlers.GetUserByIdHandler)
-	r.HandleFunc("GET /usersp", handlers.GetPaginatedUsers)
+	r.HandleFunc("GET /users", handlers.GetPaginatedUsers)
+	r.HandleFunc("GET /common-friends", handlers.GetCommonFriends)
 
 	log.Println("Starting...")
 	log.Fatal(http.ListenAndServe(":8080", middleware.Log(r)))
