@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"strconv"
 
 	"p5/internal/models"
@@ -60,7 +59,6 @@ func (r *Repository) filterUsers(filter *models.UserFilter, limit int, offset in
 	filterParamValues = append(filterParamValues, limit, offset)
 	query += ` LIMIT $` + strconv.Itoa(len(filterParamValues)-1) + ` OFFSET $` + strconv.Itoa(len(filterParamValues))
 
-	log.Println(query, filterParamValues)
 	rows, err := r.db.DB.Query(query, filterParamValues...)
 	return rows, err
 }
