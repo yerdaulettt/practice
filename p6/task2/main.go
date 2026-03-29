@@ -42,6 +42,8 @@ func withAtomic() {
 }
 
 func main() {
+	// Teamlead, previous code result can't be always 1000, because
+	// data race happens and leads to incorrect result
 	withMutex()
 	withAtomic()
 }
