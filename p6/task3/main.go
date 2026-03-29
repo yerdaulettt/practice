@@ -18,7 +18,7 @@ func startServer(ctx context.Context, name string) <-chan string {
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.After(time.Duration(rand.Intn(100)) * time.Millisecond):
+			case <-time.After(time.Duration(rand.Intn(500)) * time.Millisecond):
 				out <- fmt.Sprintf("[%s] metric: %d", name, rand.Intn(100))
 			}
 		}
