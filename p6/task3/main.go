@@ -18,7 +18,7 @@ func startServer(ctx context.Context, name string) <-chan string {
 			select {
 			case <-ctx.Done():
 				return
-			case <-time.After(time.Duration(rand.Intn(500)) * time.Millisecond):
+			case <-time.After(time.Duration(rand.Intn(100)) * time.Millisecond):
 				out <- fmt.Sprintf("[%s] metric: %d", name, rand.Intn(100))
 			}
 		}
@@ -44,6 +44,17 @@ func FanIn(ctx context.Context, ctotal ...<-chan string) <-chan string {
 	go func() {
 		wg.Wait()
 		close(result)
+		fmt.Println("closed channel")
+	}()
+
+	go func() {
+		<-ctx.Done()
+		_, ok := <-result
+		if ok {
+			close(result)
+			fmt.Println("close fanin")
+		}
+		fmt.Println(ctx.Err(), "fanin canceled")
 	}()
 
 	return result
