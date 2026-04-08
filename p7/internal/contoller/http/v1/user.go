@@ -29,9 +29,22 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserInterface) {
 		protected := h.Group("/")
 		protected.Use(utils.JWTAuthMiddleware())
 		{
+			protected.GET("/me", r.GetMe)
 			protected.GET("/protected/hello", r.ProtectedFunc)
 		}
 	}
+}
+
+func (r *userRoutes) GetMe(c *gin.Context) {
+	userId := c.Value("userID")
+
+	me, err := r.t.GetMe(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(200, gin.H{"me": me})
 }
 
 func (r *userRoutes) ProtectedFunc(c *gin.Context) {

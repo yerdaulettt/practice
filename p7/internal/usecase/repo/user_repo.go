@@ -30,3 +30,11 @@ func (u *UserRepo) RegisterUser(user *entity.User) (*entity.User, error) {
 
 	return user, nil
 }
+
+func (u *UserRepo) GetMe(id any) (*entity.User, error) {
+	var me entity.User
+	if err := u.PG.Conn.Where("id = ?", id).First(&me).Error; err != nil {
+		return nil, err
+	}
+	return &me, nil
+}

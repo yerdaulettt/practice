@@ -42,3 +42,11 @@ func (u *UserUseCase) RegisterUser(user *entity.User) (*entity.User, string, err
 	sessionId := uuid.New().String()
 	return user, sessionId, nil
 }
+
+func (u *UserUseCase) GetMe(id any) (*entity.User, error) {
+	me, err := u.repo.GetMe(id)
+	if err != nil {
+		return nil, err
+	}
+	return me, nil
+}
