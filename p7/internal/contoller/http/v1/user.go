@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"p7/internal/entity"
+	"p7/internal/middleware"
 	"p7/internal/usecase"
 	"p7/internal/usecase/repo"
 	"p7/pkg/postgres"
@@ -29,10 +30,23 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserInterface) {
 		protected := h.Group("/")
 		protected.Use(utils.JWTAuthMiddleware())
 		{
+			protected.PATCH("promote/:id", middleware.RoleMiddleware("admin"), r.PromoteUser)
 			protected.GET("/me", r.GetMe)
 			protected.GET("/protected/hello", r.ProtectedFunc)
 		}
 	}
+}
+
+func (r *userRoutes) PromoteUser(c *gin.Context) {
+	username := c.Param("id")
+	log.Println(username)
+	status, err := r.t.Promote(username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	c.JSON(200, gin.H{"promoted": status})
 }
 
 func (r *userRoutes) GetMe(c *gin.Context) {
@@ -80,7 +94,7 @@ func (r *userRoutes) RegisterUser(c *gin.Context) {
 		Username: createUserDTO.Username,
 		Email:    createUserDTO.Email,
 		Password: hashedPassword,
-		Role:     "user",
+		Role:     createUserDTO.Role,
 	}
 
 	createdUser, sessionId, err := r.t.RegisterUser(&user)

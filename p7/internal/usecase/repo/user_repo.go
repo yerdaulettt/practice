@@ -2,6 +2,7 @@ package repo
 
 import (
 	"fmt"
+	"log"
 	"p7/internal/entity"
 	"p7/pkg/postgres"
 )
@@ -37,4 +38,15 @@ func (u *UserRepo) GetMe(id any) (*entity.User, error) {
 		return nil, err
 	}
 	return &me, nil
+}
+
+func (u *UserRepo) Promote(username string) (bool, error) {
+	var id int
+	if err := u.PG.Conn.Raw("update users set role = 'admin' where username = ? returning id", username).Row().Scan(&id); err != nil {
+		log.Println(err)
+		return false, err
+	}
+
+	log.Println(id)
+	return true, nil
 }

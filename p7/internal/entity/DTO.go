@@ -11,3 +11,7 @@ type LoginUserDTO struct {
 	Username string
 	Password string
 }
+
+type PromoteUserDTO struct {
+	Username string
+}

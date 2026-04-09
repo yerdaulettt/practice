@@ -50,3 +50,11 @@ func (u *UserUseCase) GetMe(id any) (*entity.User, error) {
 	}
 	return me, nil
 }
+
+func (u *UserUseCase) Promote(username string) (bool, error) {
+	promoted, err := u.repo.Promote(username)
+	if err != nil {
+		return false, err
+	}
+	return promoted, nil
+}
