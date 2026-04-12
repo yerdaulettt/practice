@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"p7/internal/entity"
 	"p7/internal/middleware"
@@ -13,6 +14,7 @@ import (
 	"p7/utils"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
 )
 
 type userRoutes struct {
@@ -24,11 +26,16 @@ func newUserRoutes(handler *gin.RouterGroup, t usecase.UserInterface) {
 
 	h := handler.Group("/users")
 	{
-		h.POST("/", r.RegisterUser)
-		h.POST("/login", r.LoginUser)
+		public := h.Group("/")
+		public.Use(middleware.NewRateLimiter(rate.Every(10*time.Second), 3).Middleware())
+		{
+			public.POST("/", r.RegisterUser)
+			public.POST("/login", r.LoginUser)
+		}
 
 		protected := h.Group("/")
 		protected.Use(utils.JWTAuthMiddleware())
+		protected.Use(middleware.NewRateLimiter(rate.Every(10*time.Second), 5).Middleware())
 		{
 			protected.PATCH("promote/:id", middleware.RoleMiddleware("admin"), r.PromoteUser)
 			protected.GET("/me", r.GetMe)

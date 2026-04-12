@@ -38,6 +38,8 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		tokenStr := c.GetHeader("Authorization")
 		if tokenStr == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token required"})
+			// c.JSON(http.StatusUnauthorized, gin.H{"error": "Token required"})
+			// c.Next()
 			return
 		}
 
@@ -46,6 +48,8 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		if err != nil || !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			// c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			// c.Next()
 			return
 		}
 
