@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAdd(t *testing.T) {
 	got := Add(5, 6)
@@ -69,8 +71,8 @@ func TestDivideTableDriven(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Divide(tt.a, tt.b)
-			if err != nil {
-				t.Errorf("Division by zero")
+			if err != nil && err != errDivisionByZero {
+				t.Errorf("Expected division by zero error")
 			}
 			if got != tt.want {
 				t.Errorf("Divide(%d, %d) = %d; want %d", tt.a, tt.b, got, tt.want)
