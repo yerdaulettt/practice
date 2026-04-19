@@ -16,7 +16,7 @@ func TestGetUserByID(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 1, Name: "Batman"}
+	user := &repository.User{ID: 1, Name: "Test 1"}
 	mockRepo.EXPECT().GetUserByID(1).Return(user, nil)
 
 	result, err := userService.GetUserByID(1)
@@ -31,7 +31,7 @@ func TestCreateUser(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 1, Name: "Superman"}
+	user := &repository.User{ID: 2, Name: "Test 2"}
 	mockRepo.EXPECT().CreateUser(user).Return(nil)
 
 	err := userService.CreateUser(user)
@@ -45,10 +45,10 @@ func TestRegisterUserExists(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 2, Name: "Ironman"}
-	mockRepo.EXPECT().GetByEmai("ironman@email.com").Return(user, nil)
+	user := &repository.User{ID: 3, Name: "Test 3"}
+	mockRepo.EXPECT().GetByEmail("3@test.com").Return(user, nil)
 
-	err := userService.RegisterUser(user, "ironman@email.com")
+	err := userService.RegisterUser(user, "3@test.com")
 	assert.Error(t, err)
 }
 
@@ -59,11 +59,11 @@ func TestRegisterUserNewUser(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 7, Name: "Spiderman"}
-	mockRepo.EXPECT().GetByEmai("spiderman@email.com").Return(nil, nil)
+	user := &repository.User{ID: 4, Name: "Test 4"}
+	mockRepo.EXPECT().GetByEmail("4@test.com").Return(nil, nil)
 	mockRepo.EXPECT().CreateUser(user).Return(nil)
 
-	err := userService.RegisterUser(user, "spiderman@email.com")
+	err := userService.RegisterUser(user, "4@test.com")
 	assert.NoError(t, err)
 }
 
@@ -74,10 +74,10 @@ func TestRegisterUserRepoError(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 11, Name: "Venom"}
-	mockRepo.EXPECT().GetByEmai("venom@email.com").Return(nil, assert.AnError)
+	user := &repository.User{ID: 5, Name: "Test 5"}
+	mockRepo.EXPECT().GetByEmail("5@test.com").Return(nil, assert.AnError)
 
-	err := userService.RegisterUser(user, "venom@email.com")
+	err := userService.RegisterUser(user, "5@test.com")
 	assert.Error(t, err)
 }
 
@@ -92,6 +92,34 @@ func TestUpdateUsernameEmptyName(t *testing.T) {
 	assert.Error(t, err)
 }
 
+func TestUpdateUsernameNotFoundError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := repository.NewMockUserRepository(ctrl)
+	userService := NewUserService(mockRepo)
+
+	mockRepo.EXPECT().GetUserByID(6).Return(nil, assert.AnError)
+
+	err := userService.UpdateUserName(6, "Test 6 new")
+	assert.Error(t, err)
+}
+
+func TestUpdateUsernameFail(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := repository.NewMockUserRepository(ctrl)
+	userService := NewUserService(mockRepo)
+
+	user := &repository.User{ID: 7, Name: "Test 7"}
+	mockRepo.EXPECT().GetUserByID(7).Return(user, nil)
+	mockRepo.EXPECT().UpdateUser(user).Return(assert.AnError)
+
+	err := userService.UpdateUserName(7, "Test 7 new")
+	assert.Error(t, err)
+}
+
 func TestUpdateUsername(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -99,13 +127,13 @@ func TestUpdateUsername(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	user := &repository.User{ID: 20, Name: "Name"}
-	mockRepo.EXPECT().GetUserByID(20).Return(user, nil)
+	user := &repository.User{ID: 6, Name: "Test 6"}
+	mockRepo.EXPECT().GetUserByID(6).Return(user, nil)
 	fmt.Println("\nUser before update:", user)
 
 	mockRepo.EXPECT().UpdateUser(user).Return(nil)
 
-	err := userService.UpdateUserName(20, "NewName")
+	err := userService.UpdateUserName(6, "Test 6 new")
 	fmt.Print("User after update: ", user, "\n\n")
 	assert.NoError(t, err)
 }
@@ -128,9 +156,19 @@ func TestDeleteUser(t *testing.T) {
 	mockRepo := repository.NewMockUserRepository(ctrl)
 	userService := NewUserService(mockRepo)
 
-	mockRepo.EXPECT().DeleteUser(3).Return(nil)
+	user := &repository.User{ID: 19, Name: "Test 19"}
+	mockRepo.EXPECT().GetUserByID(19).Return(user, nil)
 
-	err := userService.DeleteUser(3)
+	mockRepo.EXPECT().DeleteUser(19).Return(nil)
+	mockRepo.EXPECT().GetUserByID(19).Return(nil, nil)
+
+	beforeDelete, err := userService.GetUserByID(19)
+	fmt.Println("\nUser before delete:", beforeDelete)
+
+	err = userService.DeleteUser(19)
+	result, err := userService.GetUserByID(19)
+	fmt.Print("User after delete:", result, "\n\n")
+
 	assert.NoError(t, err)
 }
 

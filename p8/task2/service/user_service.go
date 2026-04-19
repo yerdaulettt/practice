@@ -23,7 +23,7 @@ func (s *UserService) CreateUser(user *repository.User) error {
 }
 
 func (s *UserService) RegisterUser(user *repository.User, email string) error {
-	existing, err := s.repo.GetByEmai(email)
+	existing, err := s.repo.GetByEmail(email)
 	if existing != nil {
 		return fmt.Errorf("user with this email already exists")
 	}
