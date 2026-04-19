@@ -53,24 +53,3 @@ func (s *ExchangeService) GetRate(from, to string) (float64, error) {
 
 	return result.Rate, nil
 }
-
-func main() {
-	s := NewExchangeService("http://localhost:8080")
-
-	for {
-		var from, to string
-
-		fmt.Println("Enter from: ")
-		fmt.Scan(&from)
-
-		if from == "q" {
-			break
-		}
-
-		fmt.Println("Enter to: ")
-		fmt.Scan(&to)
-
-		rate, err := s.GetRate(from, to)
-		fmt.Println("Rate - ", rate, "; err - ", err)
-	}
-}
