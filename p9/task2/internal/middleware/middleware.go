@@ -15,7 +15,7 @@ func Log(next http.Handler) http.Handler {
 	})
 }
 
-func Idempotency(store *models.InMemory, next http.Handler) http.Handler {
+func Idempotency(store *models.RedisCache, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		key := r.Header.Get("Idempotency-Key")
 		if key == "" {
