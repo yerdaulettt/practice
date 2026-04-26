@@ -12,7 +12,7 @@ func Run(testURL string) {
 
 	handlers.SetURL(testURL)
 
-	r.HandleFunc("GET /pay", handlers.PaymentHandler)
+	r.HandleFunc("POST /pay", handlers.PaymentHandler)
 
 	log.Println("Starting...")
 	log.Fatal(http.ListenAndServe(":8080", r))

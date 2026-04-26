@@ -6,6 +6,7 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -17,13 +18,17 @@ func IsRetryable(resp *http.Response, err error) bool {
 		return false
 	}
 
+	if os.IsTimeout(err) {
+		return true
+	}
+
 	return false
 }
 
 func CalculateBackoff(attempt int, cfg *retryConfig) time.Duration {
 	backoff := cfg.baseDelay * time.Duration(math.Pow(2, float64(attempt)))
 	if backoff > cfg.maxDelay {
-		backoff = cfg.baseDelay
+		backoff = cfg.maxDelay
 	}
 	jitter := time.Duration(rand.Int63n(int64(backoff)))
 
@@ -32,20 +37,22 @@ func CalculateBackoff(attempt int, cfg *retryConfig) time.Duration {
 
 func executePayment(ctx context.Context, cfg *retryConfig) error {
 	var err error
+
 	for attempt := 0; attempt < cfg.maxRetries; attempt++ {
 		if ctx.Err() != nil {
 			return ctx.Err()
 		}
 
 		resp, err := http.Get(testURL)
-		if !IsRetryable(resp, err) {
-			return err
+		if resp.StatusCode == 200 {
+			fmt.Println("Attempt", attempt+1, "Success!")
+			return nil
 		}
 		defer resp.Body.Close()
 
-		// if err == nil {
-		// 	break
-		// }
+		if !IsRetryable(resp, err) {
+			return err
+		}
 
 		if attempt == cfg.maxRetries-1 {
 			return err

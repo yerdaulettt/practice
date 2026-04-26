@@ -18,7 +18,7 @@ func PaymentHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	config := &retryConfig{maxRetries: 5, baseDelay: 500 * time.Millisecond, maxDelay: 3000 * time.Millisecond}
+	config := &retryConfig{maxRetries: 5, baseDelay: 500 * time.Millisecond, maxDelay: 5000 * time.Millisecond}
 
 	err := executePayment(ctx, config)
 	if err != nil {
